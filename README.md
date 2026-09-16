@@ -27,6 +27,20 @@ skills/teach/SKILL.md
 
 The skill is configured with `disable-model-invocation: true`, so it should be invoked deliberately when the student wants to begin or continue exam preparation.
 
+## Installer
+
+On Windows, the repository includes the OpenCode study-stack installer in
+`installer/`. From the repository root, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\installer\Install-All.ps1 -IncludeOptional
+```
+
+The installer uses this repository's local `skills/teach` by default. See
+[`installer/README.md`](installer/README.md) for individual steps and the
+standalone `-UseRemoteTeach` option.
+
 ## Usage
 
 Invoke `teach` and provide:

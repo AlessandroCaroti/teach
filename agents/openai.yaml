@@ -1,0 +1,5 @@
+interface:
+  display_name: "Teach"
+  short_description: "Prepare for an exam from your own study materials"
+policy:
+  allow_implicit_invocation: false

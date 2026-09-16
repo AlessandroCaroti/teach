@@ -34,13 +34,21 @@ This is the main thing that makes this skill different from general tutoring: **
 - If the materials are internally inconsistent, or look like they contain an error (a typo in a formula, a contradiction between two slides), say so rather than silently fixing it or silently repeating it. The student's exam will follow their materials, errors and all, so quietly overriding them can hurt more than it helps.
 - The goal behind all of this: never let the student walk away having studied something that isn't actually going to be on their exam. When you're not sure whether something belongs, it's better to ask the student or flag the uncertainty than to fold it in silently.
 
+## Tool and Skill Orchestration
+
+Depending on the environment, other skills and MCP tools may be available: document readers (`pdf`, `docx`, `pptx`, `xlsx`), Docling, Mermaid, Jupyter notebooks, Anki, `grounded-citations`, `arxiv`, `socrates`, or others. `teach` stays the orchestrator regardless of which of these are installed — it decides when a specialized capability is needed, integrates whatever it returns back into the workspace files above, and never lets a tool take over exam strategy, syllabus decisions, or what to study next.
+
+Use a tool because the task genuinely calls for it, not because it's available, and prefer the simplest one that reliably does the job. If an optional tool is missing, fall back to the best alternative and keep the session moving rather than stalling on it.
+
+Full delegation table, the source hierarchy for tool-derived information, capability fallback rules, and the specific policy for each integration (including how Docling, Jupyter, Anki, `grounded-citations`, `arxiv`, and Socratic mode should and shouldn't be used) live in [ORCHESTRATION.md](./ORCHESTRATION.md). Read it before using any of these tools for the first time in a session.
+
 ## Getting Started
 
 At the start of a new workspace, or whenever the student wants to study a subject you don't yet have materials for:
 
 1. Find out what the exam actually is: subject, date (if set), format (written, oral, multiple-choice, practical, open-book, etc.), and anything the student already knows about its scope or weighting.
 2. Ask for the materials, if they haven't provided them yet. Be specific about what's useful: lecture notes, slides, textbook chapters, past papers, problem sets, datasets, a syllabus document — anything their course or certifying body actually uses.
-3. Read every material fully before using it. For formats you can't read directly, use whatever extraction tools or skills are available in your environment. Never infer a document's content from its filename.
+3. Read every material fully before using it. For formats you can't read directly, use whatever extraction tools or skills are available in your environment — see [ORCHESTRATION.md](./ORCHESTRATION.md) for which one to reach for by format, and when to fall back to Docling for a difficult document. Never infer a document's content from its filename.
 4. Log each material in `SOURCES.md`, then start building `SYLLABUS.md` from what you've read.
 5. Write or update `EXAM.md` from what the student told you, and confirm it with them before treating it as settled.
 
@@ -93,7 +101,8 @@ If the exam is timed, retention alone isn't quite enough: the student also needs
 A lesson is a single, self-contained HTML file in `./lessons/`, teaching one tightly scoped topic tied to the syllabus. Keep it short: one sitting, one tangible win, pitched at the student's current level per What to Study Next above.
 
 - Ground the explanation in the materials, and point back to exactly where it came from (which slide, chapter, or section) so the student can cross-reference the original.
-- Where the materials give a worked example, use it, or one very close to it, before inventing a new one.
+- Where the materials give a worked example, use it, or one very close to it, before inventing a new one. For a numerical or dataset-based example, verify it with a Jupyter notebook when one is available rather than relying on mental arithmetic — see [ORCHESTRATION.md](./ORCHESTRATION.md).
+- If a process, timeline, dependency, or relationship would land better as a diagram than as prose, and Mermaid is available, include one. It supports the explanation; it doesn't replace it.
 - Build from what's already in `./assets/` rather than reinventing components. A shared stylesheet, flashcard widget, and quiz widget are the first things a workspace earns, and every lesson should look like part of the same course.
 - End with a prompt for the student to ask follow-up questions. You're their tutor, and anything unclear is worth clearing up before moving on.
 - Make it genuinely readable: clean typography, real hierarchy, comfortable to print or revisit later. This is something the student comes back to.
@@ -119,6 +128,10 @@ Within lessons, reference docs, or on their own, use quizzes and flashcards to m
 - Give feedback immediately, ideally automatically within the widget itself, not just at the end.
 
 Flashcards are the sharpest tool for pure memorization items (definitions, formulas, vocabulary); quizzes and short-answer questions suit topics that need applied understanding.
+
+If Anki is available, it's a reasonable home for pure memorization items that deserve persistent spaced repetition beyond this workspace — but it's an output, not a substitute for `GLOSSARY.md` or a syllabus entry, and not every term needs a card. See [ORCHESTRATION.md](./ORCHESTRATION.md) for what's worth turning into a deck.
+
+When the student wants guided, no-answers-given practice — talking through a problem or rehearsing an oral exam rather than being taught — and `socrates` is available, that's a distinct, opt-in mode rather than the default. See [ORCHESTRATION.md](./ORCHESTRATION.md) for how it should and shouldn't blend with normal `teach` behavior.
 
 ## Reference Documents & Glossary
 

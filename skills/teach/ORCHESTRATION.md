@@ -61,7 +61,7 @@ Not every workspace will have every tool installed. Before relying on an optiona
 
 - If it's missing, fall back to the best available alternative and keep going — don't stall the session or repeatedly nag the student to install something optional mid-lesson.
 - Missing `pdf`/`docx`/`pptx`/`xlsx` skill, Docling available → use Docling.
-- Missing Docling → use the ordinary document-reading skill; if extraction still looks broken (garbled text, missing tables), say so plainly rather than teaching from bad extraction.
+- Missing Docling → use the ordinary document-reading skill; if extraction still looks broken (garbled text, missing tables), say so plainly rather than teaching from bad extraction. Before treating Docling as missing, note that it can look unavailable simply because it's still starting up — see [Docling MCP](#docling-mcp) for the two common causes and what to check before falling back.
 - Missing Jupyter → solve the calculation directly and note that it wasn't programmatically verified.
 - Missing Anki → keep memorization targets inside the workspace (`GLOSSARY.md`, a lesson's flashcard widget) instead.
 - Missing `grounded-citations` or `arxiv` → treat that as another reason to lean on the provided materials rather than reaching further outside them.
@@ -87,6 +87,15 @@ Treat Docling as a fallback and enhancement, not a default first pass. Reach for
 - the ordinary `pdf` skill's extraction looks incomplete, garbled, or loses layout that carries meaning (e.g. a diagram-heavy slide, a form).
 
 For an ordinary machine-readable PDF, try the `pdf` skill first. Don't run the same document through both extraction paths unless the first one gave you reason to distrust it — that wastes context and can produce two slightly different versions of the same material.
+
+### Docling MCP: setup and known failure modes
+
+`docling-mcp` (the typical way Docling shows up as an MCP server, often launched via `uvx`) has two startup quirks that look like the tool being broken when it isn't. Knowing them avoids wrongly concluding Docling is unavailable and falling back to a worse extraction than necessary:
+
+- **Wrong conversion mode.** The server defaults to `remote` mode, which expects a `DOCLING_MCP_SERVICE_URL` pointing at a hosted conversion service. In a workspace that only has Docling installed locally, remote mode has nothing to call and every conversion fails with something like `DOCLING_MCP_SERVICE_URL is not set but DOCLING_MCP_CONVERSION_MODE=remote`. If the environment doesn't document a remote endpoint, set `DOCLING_MCP_CONVERSION_MODE=local` so it runs against the local Docling install instead.
+- **Slow cold start.** The first launch in a fresh environment can install a large dependency set and load Docling's models before it responds — several minutes, not seconds. If the calling client (an agent runtime, an MCP host) applies a shorter startup timeout, it can report the server as unavailable or failed even though it's still finishing setup. A second launch after that first one, with the environment already warm, typically starts in well under a minute. If Docling reports as unavailable right after being newly configured, that's a reason to retry once after giving it time to finish its first boot, not to immediately conclude it's broken and fall back.
+
+If tools still don't appear after a retry and there's a way to invoke the server directly (a small script or CLI that speaks its protocol) that's a faster way to confirm whether the server itself works before assuming a client-side integration problem — and, in a pinch, is itself a usable path to get a batch of documents converted while the client-side issue gets sorted out. Either way, whatever Docling produces still goes through the normal extraction → `SOURCES.md` → `SYLLABUS.md` pipeline; a workaround for reaching the tool doesn't change what happens with its output.
 
 ## Mermaid diagrams
 

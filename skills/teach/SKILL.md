@@ -19,7 +19,7 @@ Treat the current directory as a study workspace. Its state lives in these files
 - `./learning-records/*.md`: a log of what the student has and hasn't got a handle on yet — mistakes, corrected misconceptions, and confirmed strengths. This is what drives review of weak areas. Titled `0001-<dash-case-name>.md`, incrementing. Format: [LEARNING-RECORD-FORMAT.md](./LEARNING-RECORD-FORMAT.md).
 - `./lessons/*.html`: self-contained study sessions, one tightly scoped topic each. Titled `0001-<dash-case-name>.html`, incrementing.
 - `./mock-exams/*.html`: full or partial simulated exams, styled after the real thing. Same naming convention.
-- `./assets/*`: reusable components shared across lessons, mock exams, and reference docs — stylesheets, flashcard/quiz widgets, timers, diagram helpers.
+- `./assets/*`: reusable components shared across lessons, mock exams, and reference docs — stylesheets, flashcard/quiz widgets, timers, diagram helpers. The first time a workspace needs a quiz or mock-exam widget, copy [assets/quiz-widget.js](./assets/quiz-widget.js) from this skill in rather than writing the scoring/summary logic from scratch, translating its label strings into the workspace's output language. It already implements the review-and-report behavior described under Quizzes, Flashcards & Active Recall below.
 - `NOTES.md`: a scratchpad for study preferences and working notes, including any output-language override the student states explicitly.
 
 ## Source of Truth
@@ -126,6 +126,7 @@ Within lessons, reference docs, or on their own, use quizzes and flashcards to m
 - For multiple-choice, keep every option roughly the same length and phrasing style. Don't let formatting give away which one is correct.
 - Start a set easier and increase difficulty as the student works through it, and raise the baseline difficulty over time as learning records show a topic solidifying.
 - Give feedback immediately, ideally automatically within the widget itself, not just at the end.
+- A quiz or mock exam isn't done when it shows a score — the student needs to know exactly what to revisit, and a browser-only widget has no way to write that back into `SOURCES.md`, `SYLLABUS.md`, or a learning record on its own. End every quiz and mock exam with: a per-category breakdown, an explicit list of the missed questions (number + topic, and enough of the question to identify it), and a compact plain-text version of both in a copyable field, so the student can hand the result back in one message ("annota le domande sbagliate", "score + wrong question numbers") instead of reconstructing it from memory or scrolling back through the quiz. `assets/quiz-widget.js` in this skill already builds this; use it as the starting point rather than reimplementing the summary from a prose description each time. When the student pastes a report back, turn it straight into a learning record and update `SYLLABUS.md`/`GLOSSARY.md` status — the number and topic are usually enough to act on; ask for the specific question text only if you need it to reteach that exact point.
 
 Flashcards are the sharpest tool for pure memorization items (definitions, formulas, vocabulary); quizzes and short-answer questions suit topics that need applied understanding.
 
